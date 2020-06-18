@@ -1,39 +1,38 @@
-document.addEventListener('DOMContentLoaded', function(){
-    'use strict'
+window.addEventListener('DOMContentLoaded', function(){
 
-    let contentTab = document.querySelectorAll('.info-tabcontent'),
-        info = document.querySelector('.info'),
-        headerTab = document.querySelectorAll('.info-header-tab');
-    
-    console.log(contentTab);
-    
-    function hideTabContent(a) {
+    'use strict';
+    let info = document.querySelector('.info-header');
+    let headerTab = document.querySelectorAll('.info-header-tab');
+    let contentTab = document.querySelectorAll('.info-tabcontent');
+    //console.log(contentTab);
+
+    function hideContentTab(a) {
         for (let i = a; i < contentTab.length; i++) {
-                contentTab[i].classList.remove('show');
-                contentTab[i].classList.add('hide');
+            contentTab[i].classList.add('hide');
+            contentTab[i].classList.remove('show');
         }
     }
 
-    hideTabContent(1);
+    hideContentTab(1);
 
-    function showTabContent(a) {
-        if (contentTab[a].classList.contains('hide')) {
-            contentTab[a].classList.remove('hide');
-            contentTab[a].classList.add('show');
-        }
+    function showContentTab(b) {
+        contentTab[b].classList.remove('hide');
+        contentTab[b].classList.add('show');
     }
 
-    info.addEventListener('click', function(event){
-        let target = event.target;
-
-        if (target && target.classList.contains('info-header-tab')) {
-            hideTabContent(0);
-            for (let i = 0; i < headerTab.length; i++) {
-                console.log('121212');
-                if (target == headerTab[i]) {
-                    showTabContent(i);
-                }
+    info.addEventListener('click', function(e){
+        let target = e.target;
+        console.log(target);
+        
+        for (let i = 0; i < headerTab.length; i++) {
+            if (target && target == headerTab[i]) {
+                hideContentTab(0);
+                showContentTab(i);
+                break;
             }
         }
-    });
-})
+    })
+
+
+
+});
