@@ -31,8 +31,57 @@ window.addEventListener('DOMContentLoaded', function(){
                 break;
             }
         }
-    })
+    });
 
+    //timer realization
 
+    function getTimeRemaining(endtime) {
+
+        let t = Date.parse(endtime) - Date.parse(new Date());
+        let seconds = Math.floor((t/1000)%60);
+        let minutes = Math.floor((t/(1000*60))%60);
+        let hours = Math.floor((t/(1000*60*60))%24);
+
+        return {
+            'total' : t,
+            'hours' : hours,
+            'minutes' : minutes,
+            'seconds' : seconds
+        }
+    }
+
+    function setClock(id, endtime) {
+        let clock = document.getElementById(id);
+        let seconds = clock.querySelector('.seconds');
+        let minutes = clock.querySelector('.minutes');
+        let hours = clock.querySelector('.hours');
+        let timer = setInterval(updateClock, 1000);
+
+        function updateClock() {
+            let time = getTimeRemaining(endtime);
+            //console.log(time);
+            
+            function twoDigitsTime(a) {
+                if (a < 10) {
+                    return '0' + a;
+                } else {
+                    return a;
+                }
+            }
+
+            seconds.textContent = twoDigitsTime(time.seconds);
+            minutes.textContent = twoDigitsTime(time.minutes);
+            hours.textContent = twoDigitsTime(time.hours);
+
+            if (time.total <= 0) {
+                seconds.textContent = '00';
+                minutes.textContent = '00';
+                hours.textContent = '00';
+                clearInterval(timer);
+            }
+        }
+    }
+
+    setClock('timer', '2020-06-19');
 
 });
