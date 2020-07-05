@@ -117,39 +117,64 @@ window.addEventListener('DOMContentLoaded', function(){
         failure: "Ошибка :("
     };
 
-    let form = document.querySelector('.main-form'),
-        input = form.querySelector('input');
+    let form = document.querySelector('.main-form');
 
     let statusMessage = document.createElement('div');
         statusMessage.classList.add('status');
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        form.appendChild(statusMessage);
+    function sendForm(form) {
+        form.addEventListener('submit', function(e) {
+            let input = form.querySelectorAll('input');
 
-        let request = new XMLHttpRequest();
-        request.open('POST', "server.php");
-        request.setRequestHeader("Content-type", "application/json; charset=utf-8");
+            e.preventDefault();
+            form.appendChild(statusMessage);
+            let formData = new FormData(form);
+            let obj = {};
+            formData.forEach(function(value, key) {
+                obj[key] = value;
+            });
+            let json = JSON.stringify(obj);
 
-        let formData = new FormData(form);
-        let obj = {};
-        formData.forEach(function(value, key) {
-            obj[key] = value;
-        });
-        let json = JSON.stringify(obj);
+            function postForm() {
 
-        request.send(json);
+                return new Promise((resolve, reject) => {
 
-        request.addEventListener('readystatechange', function(){
-            if (request.readyState < 4) {
-                statusMessage.innerHTML = message.loading;
-            } else if (request.readyState == 4 && request.status == 200) {
-                statusMessage.innerHTML = message.success;
-            } else {
-                statusMessage.innerHTML = message.failure;
+                    let request = new XMLHttpRequest();
+                    request.open('POST', "server.php");
+                    request.setRequestHeader("Content-type", "application/json; charset=utf-8");
+                    request.send(json);
+    
+                    request.addEventListener('readystatechange', function(){
+                        if (request.readyState < 4) {
+                            statusMessage.innerHTML = message.loading;
+                        } else if (request.readyState == 4) {
+                            if (request.status < 299) {
+                                resolve();
+                            } else {
+                                reject();
+                            }  
+                        }
+                    });
+    
+                });
+                
             }
+
+            function clearInput() {
+                for (let i = 0; i < input.length; i++) {
+                    input[i].value = '';
+                    input[i].placeholder = '';
+                }
+            }
+    
+            postForm()
+                .then(() => statusMessage.innerHTML = message.success)
+                .catch(() => statusMessage.innerHTML = message.failure)
+                .finally(clearInput);
+    
         });
+    }
 
-    });
-
+    sendForm(form);
+    
 });
